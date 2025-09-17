@@ -1,6 +1,12 @@
-from django.apps import AppConfig
+from edx_django_utils.plugins import PluginURLs
+from openedx.core.djangoapps.plugins.constants import ProjectType
 
-class CourseUnitsConfig(AppConfig):
-    name = "course_units"
-    label = "course_units"
-    verbose_name = "Course Units"
+plugin_app = {
+    PluginURLs.CONFIG: {
+        ProjectType.LMS: {
+            PluginURLs.NAMESPACE: "course_units",
+            PluginURLs.REGEX: r"^courses/(?P<course_id>[^/]+)/units/",
+            PluginURLs.RELATIVE_PATH: "urls",
+        }
+    }
+}
