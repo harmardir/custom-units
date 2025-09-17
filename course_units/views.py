@@ -1,19 +1,23 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from xmodule.modulestore.django import modulestore
+from opaque_keys.edx.keys import CourseKey
 
 @login_required
 def units_view(request, course_id):
     """
-    Display a grid of units for the given course.
-    For now, we use dummy units. Later replace with Course Blocks API calls.
+    Display a grid of vertical units for the given course.
     """
-    # Example dummy data
+    store = modulestore()
+    course_key = CourseKey.from_string(course_id)
+    
+    # Collect all vertical units
     units = [
-        {"id": f"{course_id}+type@vertical+block@unit1", "title": "Unit 1"},
-        {"id": f"{course_id}+type@vertical+block@unit2", "title": "Unit 2"},
-        {"id": f"{course_id}+type@vertical+block@unit3", "title": "Unit 3"},
+        {"id": str(block.location), "title": getattr(block, 'display_name', 'No Name')}
+        for block in store.get_items(course_key)
+        if block.location.category == 'vertical'
     ]
-
+    
     context = {
         "course_id": course_id,
         "units": units,
